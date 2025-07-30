@@ -1,16 +1,16 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: mcp-weather
+  name: {{ include "react-agent.fullname" . }}
   labels:
-    {{- include "mcp-weather.labels" . | nindent 4 }}
+    {{- include "react-agent.labels" . | nindent 4 }}
 spec:
   {{- if not .Values.autoscaling.enabled }}
   replicas: {{ .Values.replicaCount }}
   {{- end }}
   selector:
     matchLabels:
-      {{- include "mcp-weather.selectorLabels" . | nindent 6 }}
+      {{- include "react-agent.selectorLabels" . | nindent 6 }}
   template:
     metadata:
       {{- with .Values.podAnnotations }}
@@ -18,12 +18,16 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       labels:
-        {{- include "mcp-weather.selectorLabels" . | nindent 8 }}
+        {{- include "react-agent.labels" . | nindent 8 }}
+        {{- with .Values.podLabels }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
     spec:
       {{- with .Values.imagePullSecrets }}
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
       {{- end }}
+      serviceAccountName: {{ include "react-agent.serviceAccountName" . }}
       securityContext:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
       containers:
@@ -37,30 +41,22 @@ spec:
               containerPort: {{ .Values.service.targetPort }}
               protocol: TCP
           env:
-            {{- range $key, $value := .Values.env }}
-            - name: {{ $key }}
-              value: {{ $value | quote }}
-            {{- end }}
-            {{- if .Values.weather.apiKeySecretName }}
-            - name: WEATHER_API_KEY
-              valueFrom:
-                secretKeyRef:
-                  name: {{ .Values.weather.apiKeySecretName }}
-                  key: {{ .Values.weather.apiKeySecretKey }}
-            {{- else }}
-            - name: WEATHER_API_KEY
-              value: "demo-key"
-            {{- end }}
-            - name: WEATHER_PROVIDER
-              value: {{ .Values.weather.provider | quote }}
-            - name: WEATHER_DEMO_MODE
-              value: {{ .Values.weather.demoMode | quote }}
+            - name: LLAMA_STACK_URL
+              value: {{ .Values.config.llamaStackUrl | quote }}
+            - name: HR_API_URL
+              value: {{ .Values.config.hrApiUrl | quote }}
+            - name: LOG_LEVEL
+              value: {{ .Values.config.logLevel | quote }}
           livenessProbe:
             {{- toYaml .Values.livenessProbe | nindent 12 }}
           readinessProbe:
             {{- toYaml .Values.readinessProbe | nindent 12 }}
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
+          volumeMounts:
+            {{- toYaml .Values.volumeMounts | nindent 12 }}
+      volumes:
+        {{- toYaml .Values.volumes | nindent 8 }}
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}

@@ -145,11 +145,7 @@ data:
       provider_id: rag-runtime
     - toolgroup_id: builtin::wolfram_alpha
       provider_id: wolfram-alpha
-    - toolgroup_id: mcp::weather
-      provider_id: model-context-protocol
-      mcp_endpoint:
-        uri: http://mcp-weather/sse
-    - toolgroup_id: mcp::internal-hr
+    - toolgroup_id: mcp::hr-api-tools
       provider_id: model-context-protocol
       mcp_endpoint:
         uri: http://custom-mcp-server/sse

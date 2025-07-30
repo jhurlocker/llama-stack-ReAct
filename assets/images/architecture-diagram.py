@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Generate architecture diagram for Llama Stack MCP Server project.
+Generate architecture diagram for Llama Stack ReACT Agent project.
 """
 
 import matplotlib.pyplot as plt
@@ -77,27 +77,26 @@ def create_arrow(ax, start, end, style='->', linewidth=2):
                 arrowprops=dict(arrowstyle=style, color=PRIMARY_RED, lw=linewidth))
 
 # Title
-ax.text(7, 9.5, 'Llama Stack with MCP Servers Architecture', 
+ax.text(7, 9.5, 'Llama Stack with ReACT Agent Architecture', 
         ha='center', va='center', fontsize=16, weight='bold', color=TEXT_COLOR)
 
 # Input Layer (left side)
 create_ellipse(ax, 0.5, 7.5, 2, 1, 'User\nRequest', fontsize=10)
 
 # UI Layer
-create_rect(ax, 3.5, 7.5, 2.5, 1, 'Llama Stack\nPlayground\n(Streamlit)', fontsize=9)
+create_rect(ax, 3.5, 7.5, 2.5, 1, 'ReACT Agent\nWeb Interface\n(FastAPI)', fontsize=9)
 
 # Core Orchestration Layer
-create_rect(ax, 7, 7, 2.5, 1.5, 'Llama Stack\nServer\n(port 8001)', fontsize=10)
+create_rect(ax, 7, 7, 2.5, 1.5, 'Llama Stack\nServer + ReACT\n(port 11011)', fontsize=10)
 
 # Model Layer
 create_rect(ax, 11, 7.5, 2.5, 1, 'Llama 3.2-3B\nvLLM/KServe', fontsize=9)
 
-# MCP Servers (positioned below Llama Stack for vertical alignment)
-create_rect(ax, 6, 5, 2.2, 1, 'Weather\nMCP Server\n(port 3001)', fontsize=9)
-create_rect(ax, 8.5, 5, 2.2, 1, 'HR Tools\nMCP Server\n(port 8000)', fontsize=9)
+# ReACT Agent Components (positioned below Llama Stack for vertical alignment)
+create_rect(ax, 6, 5, 2.2, 1, 'ReACT Agent\nReasoning Engine', fontsize=9)
+create_rect(ax, 8.5, 5, 2.2, 1, 'HR Tool\nExecutor', fontsize=9)
 
-# External APIs/Services (positioned at same level as MCP servers)
-create_cylinder(ax, 1, 5, 2, 1, 'Weather\nService', fontsize=8)
+# External APIs/Services (positioned at same level as agent components)
 create_cylinder(ax, 12.5, 5, 1.5, 1, 'HR Enterprise\nAPI\n(Node.js)', fontsize=7)
 
 # Infrastructure Layer (bottom)
@@ -113,39 +112,37 @@ create_arrow(ax, (6, 8), (7, 8))
 # Llama Stack to Model
 create_arrow(ax, (9.5, 8), (11, 8))
 
-# Llama Stack to MCP Servers (vertical connections)
+# Llama Stack to ReACT Components (vertical connections)
 create_arrow(ax, (7.8, 7), (7.1, 6))
 create_arrow(ax, (8.5, 7), (9.6, 6))
 
-# MCP Servers to External APIs (horizontal connections at same level)
-create_arrow(ax, (6, 5.5), (3, 5.5))
+# Tool Executor to HR API (horizontal connection)
 create_arrow(ax, (10.7, 5.5), (12.5, 5.5))
 
 # Add protocol labels along arrows
 ax.text(3, 8.3, 'HTTP', ha='center', fontsize=8, color=PRIMARY_RED, style='italic')
-ax.text(6.5, 8.3, 'WebSocket', ha='center', fontsize=8, color=PRIMARY_RED, style='italic')
+ax.text(6.5, 8.3, 'ReACT API', ha='center', fontsize=8, color=PRIMARY_RED, style='italic')
 ax.text(10.2, 8.3, 'OpenAI API', ha='center', fontsize=8, color=PRIMARY_RED, style='italic')
-ax.text(7.5, 6.5, 'SSE/MCP', ha='center', fontsize=8, color=PRIMARY_RED, style='italic')
-ax.text(4.5, 5.8, 'REST API', ha='center', fontsize=8, color=PRIMARY_RED, style='italic')
-ax.text(11.6, 5.8, 'REST API', ha='center', fontsize=8, color=PRIMARY_RED, style='italic')
+ax.text(7.5, 6.5, 'Reasoning', ha='center', fontsize=8, color=PRIMARY_RED, style='italic')
+ax.text(11.6, 5.8, 'Tool Calls', ha='center', fontsize=8, color=PRIMARY_RED, style='italic')
 
 # Add component descriptions (bottom section)
 ax.text(1, 1.5, 'Key Technologies:', fontsize=11, weight='bold', color=TEXT_COLOR)
-ax.text(1, 1.2, '• Model Context Protocol (MCP): Tool integration framework', fontsize=9, color=TEXT_COLOR)
-ax.text(1, 0.9, '• Server-Sent Events (SSE): Real-time communication', fontsize=9, color=TEXT_COLOR)
+ax.text(1, 1.2, '• ReACT Pattern: Reasoning + Acting for intelligent agents', fontsize=9, color=TEXT_COLOR)
+ax.text(1, 0.9, '• Llama Stack Client: Agent framework integration', fontsize=9, color=TEXT_COLOR)
 ax.text(1, 0.6, '• vLLM: High-performance LLM inference engine', fontsize=9, color=TEXT_COLOR)
 ax.text(1, 0.3, '• Helm Charts: Kubernetes deployment automation', fontsize=9, color=TEXT_COLOR)
 
-# Tool capabilities (right section)
-ax.text(8.5, 1.5, 'Available Tools:', fontsize=11, weight='bold', color=TEXT_COLOR)
-ax.text(8.5, 1.2, '• Weather forecasts and alerts', fontsize=9, color=TEXT_COLOR)
-ax.text(8.5, 0.9, '• Employee vacation balance queries', fontsize=9, color=TEXT_COLOR)
-ax.text(8.5, 0.6, '• Vacation request creation', fontsize=9, color=TEXT_COLOR)
-ax.text(8.5, 0.3, '• HR data access and management', fontsize=9, color=TEXT_COLOR)
+# ReACT Capabilities (right section)
+ax.text(8.5, 1.5, 'ReACT Capabilities:', fontsize=11, weight='bold', color=TEXT_COLOR)
+ax.text(8.5, 1.2, '• Multi-step reasoning and problem solving', fontsize=9, color=TEXT_COLOR)
+ax.text(8.5, 0.9, '• Conditional tool execution based on analysis', fontsize=9, color=TEXT_COLOR)
+ax.text(8.5, 0.6, '• Vacation booking with balance verification', fontsize=9, color=TEXT_COLOR)
+ax.text(8.5, 0.3, '• Natural language understanding & generation', fontsize=9, color=TEXT_COLOR)
 
 plt.tight_layout()
-plt.savefig('/Users/phayes/projects/kickstart-llama-stack-mcp-server/assets/images/architecture-diagram.png', 
+plt.savefig('/Users/phayes/projects/kickstart-llama-stack-react/assets/images/architecture-diagram.png', 
             dpi=300, bbox_inches='tight', facecolor='white', edgecolor='none')
 plt.close()
 
-print("Architecture diagram created successfully!")
+print("ReACT Architecture diagram created successfully!")

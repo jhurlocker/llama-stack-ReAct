@@ -1,0 +1,47 @@
+apiVersion: v2
+name: llama-stack-react
+description: Complete Llama Stack with ReACT Agent deployment including Llama 3.2-3B, HR API, and ReACT agent
+type: application
+version: 1.0.0
+appVersion: "1.0.0"
+keywords:
+  - llama-stack
+  - react-agent
+  - ai
+  - hr-api
+  - vllm
+  - reasoning
+home: https://github.com/rh-ai-kickstart/llama-stack-react-agent
+sources:
+  - https://github.com/rh-ai-kickstart/llama-stack-react-agent
+maintainers:
+  - name: Red Hat AI Services
+    email: ai-services@redhat.com
+annotations:
+  category: AI Applications
+  openshift.io/display-name: "Llama Stack with ReACT Agent"
+  openshift.io/provider-display-name: "Red Hat AI Services"
+  openshift.io/documentation-url: "https://rh-aiservices-bu.github.io/llama-stack-tutorial/"
+  openshift.io/support-url: "https://github.com/rh-ai-kickstart/llama-stack-react-agent/issues"
+
+dependencies:
+  - name: llama3-2-3b
+    version: "1.0.0"
+    repository: "file://../llama3.2-3b"
+    condition: components.llama3-2-3b.enabled
+  - name: llama-stack
+    version: "1.0.0"
+    repository: "file://../llama-stack"
+    condition: components.llama-stack.enabled
+  - name: react-agent
+    version: "1.0.0"
+    repository: "file://../react-agent"
+    condition: components.react-agent.enabled
+  - name: hr-enterprise-api
+    version: "1.0.0"
+    repository: "file://../hr-api"
+    condition: components.hr-enterprise-api.enabled
+  - name: custom-mcp-server
+    version: "1.0.0"
+    repository: "file://../custom-mcp-server"
+    condition: components.custom-mcp-server.enabled

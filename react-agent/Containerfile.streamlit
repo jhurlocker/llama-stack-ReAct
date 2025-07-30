@@ -1,0 +1,55 @@
+FROM registry.access.redhat.com/ubi9/python-311:1-66
+
+# Switch to root temporarily for system setup
+USER 0
+
+# curl-minimal is already available in the base image, no need to install curl
+# Just clean up any package cache
+RUN dnf clean all && \
+    rm -rf /var/cache/dnf
+
+# Create application directory and set ownership
+RUN mkdir -p /opt/app-root/src/.streamlit && \
+    chown -R 1001:1001 /opt/app-root
+
+# Switch back to non-root user
+USER 1001
+
+# Set working directory
+WORKDIR /opt/app-root/src
+
+# Copy requirements first for better caching
+COPY --chown=1001:1001 requirements.txt .
+
+# Install Python dependencies
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Copy application code
+COPY --chown=1001:1001 streamlit_app.py .
+COPY --chown=1001:1001 simple_agent.py .
+
+# Streamlit configuration
+RUN echo '\
+[server]\n\
+port = 8501\n\
+address = "0.0.0.0"\n\
+headless = true\n\
+enableCORS = false\n\
+enableXsrfProtection = false\n\
+\n\
+[browser]\n\
+gatherUsageStats = false\n\
+' > /opt/app-root/src/.streamlit/config.toml
+
+# Set environment variables for non-root user
+ENV HOME=/opt/app-root/src
+
+# Expose port
+EXPOSE 8501
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
+    CMD curl -f http://localhost:8501/_stcore/health || exit 1
+
+# Run the Streamlit app
+CMD ["streamlit", "run", "streamlit_app.py", "--server.address=0.0.0.0", "--server.port=8501"]

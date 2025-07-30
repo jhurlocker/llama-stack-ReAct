@@ -1,0 +1,58 @@
+🚀 Llama Stack with ReACT Agent has been deployed successfully!
+
+## Components Deployed:
+{{- if index .Values.components "llama3-2-3b" "enabled" }}
+✅ Llama 3.2-3B Model (vLLM)
+{{- end }}
+{{- if index .Values.components "llama-stack" "enabled" }}
+✅ Llama Stack Server
+{{- end }}
+{{- if index .Values.components "react-agent" "enabled" }}
+✅ ReACT Agent with Reasoning Capabilities
+{{- end }}
+{{- if index .Values.components "hr-enterprise-api" "enabled" }}
+✅ HR Enterprise API
+{{- end }}
+
+## Access Your ReACT Agent:
+
+1. Get the ReACT Agent interface URL:
+   export INTERFACE_URL=$(oc get route react-agent -o jsonpath='{.spec.host}' 2>/dev/null || echo "Route not found")
+   echo "ReACT Agent Interface: https://$INTERFACE_URL"
+
+2. Check deployment status:
+   oc get pods -l app.kubernetes.io/name=react-agent
+
+## Test ReACT Agent Capabilities:
+
+Try these example queries in the interface:
+
+🤔 **Simple Query:**
+   "What is the vacation balance for employee EMP001?"
+
+🧠 **Complex Reasoning:**
+   "If user EMP001 has enough remaining vacation days, book two days off for 2nd and 3rd of July 2025"
+
+🔄 **Multi-step Analysis:**
+   "Check if EMP001 has any vacation days left, and if so, suggest when they might want to use them"
+
+## Troubleshooting:
+
+Check component logs:
+  oc logs -l app.kubernetes.io/name=llama-stack
+  oc logs -l app.kubernetes.io/name=react-agent
+  oc logs -l app.kubernetes.io/name=hr-enterprise-api
+  oc logs -l app.kubernetes.io/name=llama3-2-3b
+
+## ReACT Agent Features:
+
+🤖 **Intelligent Reasoning**: Step-by-step problem solving
+🛠️ **Dynamic Tool Usage**: Conditional execution based on analysis
+📊 **HR Operations**: Vacation management with business logic
+🔄 **Multi-step Workflows**: Complex query handling
+
+The ReACT agent combines reasoning and acting to provide intelligent responses
+for complex HR operations. It will think through problems step by step and
+use the appropriate tools based on the context of your queries.
+
+For more information, visit: https://rh-aiservices-bu.github.io/llama-stack-tutorial/

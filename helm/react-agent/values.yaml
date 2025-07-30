@@ -1,0 +1,105 @@
+# Default values for react-agent
+replicaCount: 1
+
+image:
+  repository: quay.io/hayesphilip/llama-stack-react
+  pullPolicy: Always
+  tag: "latest"
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+serviceAccount:
+  create: true
+  automount: true
+  annotations: {}
+  name: ""
+
+podAnnotations: {}
+podLabels: {}
+
+podSecurityContext:
+  runAsNonRoot: true
+  # Remove specific UID/GID to let OpenShift assign them
+  # fsGroup: 1001
+  # runAsUser: 1001
+
+securityContext:
+  allowPrivilegeEscalation: false
+  capabilities:
+    drop:
+    - ALL
+  readOnlyRootFilesystem: false
+  runAsNonRoot: true
+  # Remove specific UID/GID to let OpenShift assign them
+  # runAsUser: 1001
+
+service:
+  type: ClusterIP
+  port: 8501
+  targetPort: 8501
+
+route:
+  enabled: true
+  host: ""
+  tls:
+    termination: edge
+    insecureEdgeTerminationPolicy: Redirect
+
+resources:
+  limits:
+    cpu: 500m
+    memory: 1Gi
+  requests:
+    cpu: 250m
+    memory: 512Mi
+
+livenessProbe:
+  httpGet:
+    path: /_stcore/health
+    port: http
+  initialDelaySeconds: 30
+  periodSeconds: 10
+
+readinessProbe:
+  httpGet:
+    path: /_stcore/health
+    port: http
+  initialDelaySeconds: 5
+  periodSeconds: 5
+
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 3
+  targetCPUUtilizationPercentage: 80
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
+
+# Application-specific configuration
+config:
+  llamaStackUrl: "http://llama-stack:11011"
+  hrApiUrl: "http://hr-api:3000"
+  logLevel: "INFO"
+
+# Volume mounts for tmp directories and streamlit cache
+volumeMounts:
+  - name: tmp
+    mountPath: /tmp
+  - name: var-tmp
+    mountPath: /var/tmp
+  - name: streamlit-cache
+    mountPath: /opt/app-root/src/.streamlit
+
+volumes:
+  - name: tmp
+    emptyDir: {}
+  - name: var-tmp
+    emptyDir: {}
+  - name: streamlit-cache
+    emptyDir: {}

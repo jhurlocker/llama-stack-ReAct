@@ -1,7 +1,7 @@
 {{/*
 Expand the name of the chart.
 */}}
-{{- define "llama-stack-mcp.name" -}}
+{{- define "react-agent.name" -}}
 {{- default .Chart.Name .Values.nameOverride | trunc 63 | trimSuffix "-" }}
 {{- end }}
 
@@ -10,7 +10,7 @@ Create a default fully qualified app name.
 We truncate at 63 chars because some Kubernetes name fields are limited to this (by the DNS naming spec).
 If release name contains chart name it will be used as a full name.
 */}}
-{{- define "llama-stack-mcp.fullname" -}}
+{{- define "react-agent.fullname" -}}
 {{- if .Values.fullnameOverride }}
 {{- .Values.fullnameOverride | trunc 63 | trimSuffix "-" }}
 {{- else }}
@@ -26,27 +26,37 @@ If release name contains chart name it will be used as a full name.
 {{/*
 Create chart name and version as used by the chart label.
 */}}
-{{- define "llama-stack-mcp.chart" -}}
+{{- define "react-agent.chart" -}}
 {{- printf "%s-%s" .Chart.Name .Chart.Version | replace "+" "_" | trunc 63 | trimSuffix "-" }}
 {{- end }}
 
 {{/*
 Common labels
 */}}
-{{- define "llama-stack-mcp.labels" -}}
-helm.sh/chart: {{ include "llama-stack-mcp.chart" . }}
-{{ include "llama-stack-mcp.selectorLabels" . }}
+{{- define "react-agent.labels" -}}
+helm.sh/chart: {{ include "react-agent.chart" . }}
+{{ include "react-agent.selectorLabels" . }}
 {{- if .Chart.AppVersion }}
 app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
 {{- end }}
 app.kubernetes.io/managed-by: {{ .Release.Service }}
-app.kubernetes.io/part-of: llama-stack-mcp
 {{- end }}
 
 {{/*
 Selector labels
 */}}
-{{- define "llama-stack-mcp.selectorLabels" -}}
-app.kubernetes.io/name: {{ include "llama-stack-mcp.name" . }}
+{{- define "react-agent.selectorLabels" -}}
+app.kubernetes.io/name: {{ include "react-agent.name" . }}
 app.kubernetes.io/instance: {{ .Release.Name }}
+{{- end }}
+
+{{/*
+Create the name of the service account to use
+*/}}
+{{- define "react-agent.serviceAccountName" -}}
+{{- if .Values.serviceAccount.create }}
+{{- default (include "react-agent.fullname" .) .Values.serviceAccount.name }}
+{{- else }}
+{{- default "default" .Values.serviceAccount.name }}
+{{- end }}
 {{- end }}

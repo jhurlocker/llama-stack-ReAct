@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ReACT Agent - HR Operations</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+        
+        .header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+        
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 300px;
+            gap: 30px;
+            padding: 30px;
+        }
+        
+        .chat-section {
+            display: flex;
+            flex-direction: column;
+            height: 600px;
+        }
+        
+        .chat-messages {
+            flex: 1;
+            border: 2px solid #e5e7eb;
+            border-radius: 15px;
+            padding: 20px;
+            overflow-y: auto;
+            background: #f9fafb;
+            margin-bottom: 20px;
+        }
+        
+        .message {
+            margin-bottom: 20px;
+            padding: 15px;
+            border-radius: 12px;
+            line-height: 1.6;
+        }
+        
+        .user-message {
+            background: #dbeafe;
+            border-left: 4px solid #3b82f6;
+        }
+        
+        .agent-message {
+            background: #f0f9ff;
+            border-left: 4px solid #06b6d4;
+            white-space: pre-wrap;
+        }
+        
+        .thinking {
+            background: #fef3c7;
+            border-left: 4px solid #f59e0b;
+            font-style: italic;
+        }
+        
+        .tool-usage {
+            background: #ecfdf5;
+            border-left: 4px solid #10b981;
+            font-family: monospace;
+        }
+        
+        .result {
+            background: #f0fdf4;
+            border-left: 4px solid #22c55e;
+            font-weight: 500;
+        }
+        
+        .query-form {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .query-input {
+            flex: 1;
+            padding: 15px;
+            border: 2px solid #e5e7eb;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: border-color 0.2s;
+        }
+        
+        .query-input:focus {
+            outline: none;
+            border-color: #4f46e5;
+        }
+        
+        .submit-btn {
+            padding: 15px 30px;
+            background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        
+        .submit-btn:hover {
+            transform: translateY(-2px);
+        }
+        
+        .submit-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .sidebar {
+            background: #f9fafb;
+            border-radius: 15px;
+            padding: 25px;
+        }
+        
+        .sidebar h3 {
+            color: #374151;
+            margin-bottom: 15px;
+            font-size: 1.3em;
+        }
+        
+        .example-queries {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        
+        .example-btn {
+            padding: 12px;
+            background: white;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            text-align: left;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 14px;
+        }
+        
+        .example-btn:hover {
+            border-color: #4f46e5;
+            background: #f8fafc;
+        }
+        
+        .example-title {
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 5px;
+        }
+        
+        .example-desc {
+            color: #6b7280;
+            font-size: 12px;
+        }
+        
+        .loading {
+            display: none;
+            text-align: center;
+            color: #6b7280;
+            font-style: italic;
+            padding: 20px;
+        }
+        
+        .loading.show {
+            display: block;
+        }
+        
+        @media (max-width: 768px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+            
+            .chat-section {
+                height: 400px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🤖 ReACT Agent</h1>
+            <p>Intelligent HR Operations with Reasoning & Acting</p>
+        </div>
+        
+        <div class="main-content">
+            <div class="chat-section">
+                <div class="chat-messages" id="chatMessages">
+                    <div class="message agent-message">
+                        <strong>🤖 ReACT Agent:</strong> Hello! I'm your intelligent HR assistant. I can help you with vacation management using reasoning and tool execution. Try asking me about employee vacation balances or booking time off!
+                    </div>
+                </div>
+                
+                <div class="loading" id="loading">
+                    🤔 Agent is thinking and processing...
+                </div>
+                
+                <form class="query-form" id="queryForm">
+                    <input 
+                        type="text" 
+                        class="query-input" 
+                        id="queryInput" 
+                        placeholder="Ask me about vacation management for employees..."
+                        required
+                    >
+                    <button type="submit" class="submit-btn" id="submitBtn">
+                        Send
+                    </button>
+                </form>
+            </div>
+            
+            <div class="sidebar">
+                <h3>📝 Example Queries</h3>
+                <div class="example-queries" id="exampleQueries">
+                    <!-- Examples will be loaded here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const chatMessages = document.getElementById('chatMessages');
+        const queryForm = document.getElementById('queryForm');
+        const queryInput = document.getElementById('queryInput');
+        const submitBtn = document.getElementById('submitBtn');
+        const loading = document.getElementById('loading');
+        const exampleQueries = document.getElementById('exampleQueries');
+
+        // Load example queries
+        async function loadExamples() {
+            try {
+                const response = await fetch('/examples');
+                const data = await response.json();
+                
+                exampleQueries.innerHTML = data.examples.map(example => `
+                    <button class="example-btn" onclick="useExample('${example.query.replace(/'/g, "\\'")}')">
+                        <div class="example-title">${example.title}</div>
+                        <div class="example-desc">${example.description}</div>
+                    </button>
+                `).join('');
+            } catch (error) {
+                console.error('Failed to load examples:', error);
+            }
+        }
+
+        // Use example query
+        function useExample(query) {
+            queryInput.value = query;
+            queryInput.focus();
+        }
+
+        // Add message to chat
+        function addMessage(content, type = 'agent') {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${type}-message`;
+            
+            if (type === 'user') {
+                messageDiv.innerHTML = `<strong>👤 You:</strong> ${content}`;
+            } else {
+                // Parse ReACT response for better formatting
+                let formattedContent = content
+                    .replace(/🤔 Reasoning:/g, '<div class="thinking">🤔 Reasoning:')
+                    .replace(/🛠 Using/g, '</div><div class="tool-usage">🛠 Using')
+                    .replace(/✅/g, '</div><div class="result">✅');
+                
+                if (formattedContent !== content) {
+                    formattedContent += '</div>';
+                }
+                
+                messageDiv.innerHTML = `<strong>🤖 ReACT Agent:</strong><br>${formattedContent}`;
+            }
+            
+            chatMessages.appendChild(messageDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        // Handle form submission
+        queryForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const query = queryInput.value.trim();
+            if (!query) return;
+            
+            // Add user message
+            addMessage(query, 'user');
+            
+            // Clear input and disable form
+            queryInput.value = '';
+            submitBtn.disabled = true;
+            loading.classList.add('show');
+            
+            try {
+                const formData = new FormData();
+                formData.append('query', query);
+                
+                const response = await fetch('/query', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    addMessage(data.response);
+                } else {
+                    addMessage(`Error: ${data.error}`, 'agent');
+                }
+            } catch (error) {
+                addMessage(`Error: Failed to process query - ${error.message}`, 'agent');
+            } finally {
+                submitBtn.disabled = false;
+                loading.classList.remove('show');
+                queryInput.focus();
+            }
+        });
+
+        // Load examples on page load
+        loadExamples();
+        
+        // Focus input on page load
+        queryInput.focus();
+    </script>
+</body>
+</html>
