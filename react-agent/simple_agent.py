@@ -17,13 +17,13 @@ from llama_stack_client.lib.agents.event_logger import EventLogger
 from termcolor import colored
 
 
-def main(host: str = "localhost", port: int = 11011):
+def main(host: str = "llama-stack", port: int = 80):
     """
     Main function to run the HR ReACT agent
     
     Args:
-        host: Llama Stack server host (default: localhost)
-        port: Llama Stack server port (default: 11011)
+        host: Llama Stack server host (default: llama-stack)
+        port: Llama Stack server port (default: 80)
     """
     client = LlamaStackClient(
         base_url=f"http://{host}:{port}"

@@ -13,33 +13,11 @@ This guide provides instructions for setting up the Llama Stack React Agent loca
 - Python 3.9+ and pip
 - Git
 
-## 1. Model Serving with Ollama
 
-
-### Pull and Serve the Model
-
-```bash
-# Pull the Llama 3.2 3B model
-ollama pull llama3.2:3b
-
-# Start Ollama server (if not already running)
-ollama run llama3.2:3b
-
-# Verify model is available
-ollama list
-```
-
-The model will be available at `http://localhost:11434`
-
-### Test Model Access
 
 ```bash
 # Test the model
-curl http://localhost:11434/api/generate -d '{
-  "model": "llama3.2:3b",
-  "prompt": "Hello, world!",
-  "stream": false
-}'
+curl https://route-marginal-hippopotamus-modelcar-blog.apps.dev.rhoai.rh-aiservices-bu.com/v1/models 
 ```
 
 ## 2. Llama Stack Container Setup
@@ -55,27 +33,14 @@ podman run -d \
   --name llama-stack \
   -p 11011:11011 \
   -e LLAMA_STACK_PORT=11011 \
-  -e INFERENCE_PROVIDER=ollama \
-  -e OLLAMA_URL=http://host.containers.internal:11434 \
-  -e INFERENCE_MODEL=llama3.2:3b \
-  llamastack/distribution-ollama:latest
+  -e INFERENCE_PROVIDER=vllm \
+  -e VLLM_URL=https://route-marginal-hippopotamus-modelcar-blog.apps.dev.rhoai.rh-aiservices-bu.com/v1  \
+  -e INFERENCE_MODEL=llama3-2-3b \
+  llamastack/distribution-remote-vllm:0.2.9
+
 
 # Check logs
 podman logs -f llama-stack
-
-### Alternative: Run with Docker
-
-```bash
-# If using Docker instead of Podman
-docker run -d \
-  --name llama-stack \
-  -p 11011:11011 \
-  -e LLAMA_STACK_PORT=11011 \
-  -e INFERENCE_PROVIDER=ollama \
-  -e OLLAMA_URL=http://host.docker.internal:11434 \
-  -e INFERENCE_MODEL=llama3.2:3b \
-  llamastack/distribution-ollama:0.2.9
-```
 
 ## 3. HR-API Node.js Application
 

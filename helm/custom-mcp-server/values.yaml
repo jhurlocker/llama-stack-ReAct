@@ -2,7 +2,7 @@
 replicaCount: 1
 
 image:
-  repository: quay.io/rh-aiservices-bu/kickstart-custom-mcp-server
+  repository: quay.io/rh-aiservices-bu/kickstart-react-custom-mcp-server
   tag: "latest"
 
 imagePullSecrets: []

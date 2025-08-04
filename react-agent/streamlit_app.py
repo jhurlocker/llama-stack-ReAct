@@ -106,18 +106,30 @@ def connect_to_llama_stack(host: str, port: int):
             tools=[
                 "mcp::hr-api-tools",  # HR MCP server
             ],
-            response_format={
-                "type": "json_schema",
-                "json_schema": ReActOutput.model_json_schema(),
-            },
+            # response_format={
+            #     "type": "json_schema",
+            #     "json_schema": ReActOutput.model_json_schema(),
+            # },
             sampling_params={
                 "strategy": {"type": "top_p", "temperature": 1.0, "top_p": 0.9},
             }
         )
         
         # Create session
-        session_id = agent.create_session(f"hr-react-session-{uuid.uuid4().hex}")
-        
+
+        session_id = agent.create_session("hr-react-session")
+        turn_id = agent.create_turn(session_id=session_id, messages=[{"role": "user", "content": "what is the capital of france"}],stream=True)
+        response = agent.create_turn(
+            messages=[{"role": "user", "content": "what is the capital of france"}],
+            session_id=session_id,
+            stream=True,
+        )
+
+        print("respponse")
+        print(response)
+        for log in EventLogger().log(response):
+            print(log)
+
         # Store in session state
         st.session_state.agent = agent
         st.session_state.session_id = session_id
@@ -437,8 +449,8 @@ def main():
         
         # Llama Stack connection settings
         st.subheader("Llama Stack Server")
-        host = st.text_input("Host", value="localhost", help="Llama Stack server hostname")
-        port = st.number_input("Port", value=11011, min_value=1, max_value=65535, help="Llama Stack server port")
+        host = st.text_input("Host", value="llama-stack", help="Llama Stack server hostname")
+        port = st.number_input("Port", value=80, min_value=1, max_value=65535, help="Llama Stack server port")
         
         # Connect button
         if st.button("🔌 Connect to Llama Stack"):
