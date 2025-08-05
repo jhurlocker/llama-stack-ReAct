@@ -109,9 +109,16 @@ helm dependency build ./helm/llama-stack-react
 # Deploy everything with a single command
 helm install llama-stack-react ./helm/llama-stack-react 
 
-or
+```
 
-helm install llama-stack-react ./helm/llama-stack-react  --set modelSelection=llama4-scout
+or alternatively, to deploy the llama4 scout model run:
+
+```bash
+  helm install llama-stack-react ./helm/llama-stack-react \
+    --set llama3-2-3b.enabled=false \
+    --set llama4-scout.enabled=true \
+    --set llama-stack.llamaStack.inferenceModel=llama4-scout \
+    --set llama-stack.llamaStack.vllmUrl="http://llama4-scout-predictor:8080/v1"
 ```
 
 **Note:** The `llama-stack` pod will be in `CrashLoopBackOff` status until the Llama model is fully loaded and being served. This is normal behavior as the Llama Stack server requires the model endpoint to be available before it can start successfully.
