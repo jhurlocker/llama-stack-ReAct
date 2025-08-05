@@ -42,9 +42,9 @@ spec:
               protocol: TCP
           env:
             - name: INFERENCE_MODEL
-              value: {{ .Values.llamaStack.inferenceModel | default "llama32-3b" | quote }}
+              value: {{ .Values.llamaStack.inferenceModel | default "llama3-2-3b" | quote }}
             - name: VLLM_URL
-              value: {{ .Values.llamaStack.vllmUrl | default "http://llama32-3b-predictor:8080/v1" | quote }}
+              value: {{ .Values.llamaStack.vllmUrl | default "http://llama3-2-3b-predictor:8080/v1" | quote }}
             - name: LLAMA_STACK_PORT
               value: {{ .Values.service.targetPort | quote }}
             {{- range $key, $value := .Values.env }}

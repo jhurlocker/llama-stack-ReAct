@@ -28,7 +28,11 @@ dependencies:
   - name: llama3-2-3b
     version: "1.0.0"
     repository: "file://../llama3.2-3b"
-    condition: components.llama3-2-3b.enabled
+    condition: llama3-2-3b.enabled
+  - name: llama4-scout
+    version: "1.0.0"
+    repository: "file://../llama4-scout"
+    condition: llama4-scout.enabled
   - name: llama-stack
     version: "1.0.0"
     repository: "file://../llama-stack"

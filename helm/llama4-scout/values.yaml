@@ -1,4 +1,4 @@
-# Default values for llama3.2-3b
+# Default values for llama4-scout
 nameOverride: ""
 fullnameOverride: ""
 
@@ -14,11 +14,11 @@ model:
 # Resource requirements (adjust based on GPU availability)
 resources:
   limits:
-    nvidia.com/gpu: 1
+    nvidia.com/gpu: 4
     memory: 24Gi
     cpu: 4
   requests:
-    nvidia.com/gpu: 1
+    nvidia.com/gpu: 4
     memory: 16Gi
     cpu: 2
 
@@ -29,7 +29,7 @@ nodeSelector:
 tolerations:
   - effect: NoSchedule
     key: nvidia.com/gpu
-    value: NVIDIA-A10G-SHARED
+    value: "NVIDIA-L40S-SHARED"
 
 affinity:
   nodeAffinity:
@@ -50,17 +50,17 @@ env:
 
 # InferenceService configuration
 inferenceService:
-  displayName: "llama3.2-3b"
+  displayName: "llama4-scout"
   maxReplicas: 1
   minReplicas: 1
   modelFormat: "vLLM"
   modelName: ""
-  storageUri: "oci://quay.io/redhat-ai-services/modelcar-catalog:llama-3.2-3b-instruct"
+  storageUri: "oci://registry.redhat.io/rhelai1/modelcar-llama-4-scout-17b-16e-instruct-quantized-w4a16:1.5"
 
 # Serving Runtime configuration
 servingRuntime:
   enabled: true  # Set to true to create a ServingRuntime resource
   image: "registry.redhat.io/rhaiis/vllm-cuda-rhel9:3.2.0-1754088865-hotfix-1"
-  shmSizeLimit: "1Gi"
+  shmSizeLimit: "8Gi"
   memBufferBytes: 134217728  # 128MB
   modelLoadingTimeoutMillis: 90000  # 90 seconds

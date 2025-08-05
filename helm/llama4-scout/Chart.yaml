@@ -1,0 +1,24 @@
+apiVersion: v2
+name: llama4-scout
+description: A Helm chart for Llama 4 Scout model deployment on vLLM
+type: application
+version: 1.0.0
+appVersion: "4-scout"
+keywords:
+  - llama
+  - vllm
+  - ai
+  - ml
+  - inference
+home: https://github.com/company/llama-stack-mcp-server
+sources:
+  - https://github.com/company/llama-stack-mcp-server
+maintainers:
+  - name: AI Engineering Team
+    email: ai-engineering@company.com
+annotations:
+  category: AI Applications
+  openshift.io/display-name: "Llama 4 Scout Model"
+  openshift.io/provider-display-name: "AI Engineering Team"
+  openshift.io/documentation-url: "https://docs.company.com/llama-models"
+  openshift.io/support-url: "https://support.company.com"

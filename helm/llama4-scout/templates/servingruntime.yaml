@@ -2,9 +2,9 @@
 apiVersion: serving.kserve.io/v1alpha1
 kind: ServingRuntime
 metadata:
-  name: llama3-2-3b
+  name: llama4-scout
   labels:
-    {{- include "llama3-2-3b.labels" . | nindent 4 }}
+    {{- include "llama4-scout.labels" . | nindent 4 }}
   annotations:
     opendatahub.io/apiProtocol: REST
     opendatahub.io/accelerator-name: migrated-gpu
@@ -23,16 +23,29 @@ spec:
     - --model=/mnt/models
     - --port=8080
     - --max-model-len={{ .Values.model.maxModelLen | default 8192 }}
-    - '--served-model-name=llama3-2-3b'
-    - --chat-template=/app/data/template/tool_chat_template_llama3.2_pythonic.jinja
+    - '--served-model-name=llama4-scout'
+    - --chat-template=/app/data/template/tool_chat_template_llama4_pythonic.jinja
     - '--enable-auto-tool-choice'
+    - '--tensor-parallel-size=4'
+    - '--disable-custom-all-reduce'
+    - '--enforce-eager'
     - '--tool-call-parser'
-    - pythonic
+    - llama4_pythonic
     env:
     - name: HF_HOME
       value: /tmp/hf_home
+    - name: RAY_DISABLE_IMPORT_WARNING
+      value: "1"
+    - name: RAY_DEDUP_LOGS
+      value: "0"
+    - name: CUDA_VISIBLE_DEVICES
+      value: "0,1,2,3"
+    - name: RAY_WORKER_NICENESS
+      value: "0"
+    - name: RAY_DISABLE_STRICT_VERSION_CHECK
+      value: "1"
     {{- range $key, $value := .Values.env }}
-    {{- if ne $key "HF_HOME" }}
+    {{- if and (ne $key "HF_HOME") (ne $key "CUDA_VISIBLE_DEVICES") }}
     - name: {{ $key }}
       value: {{ $value | quote }}
     {{- end }}

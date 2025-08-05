@@ -3,8 +3,6 @@
 
 # Component enablement flags - each component can be individually enabled/disabled
 components:
-  llama3-2-3b:
-    enabled: true
   llama-stack:
     enabled: true
   react-agent:
@@ -14,12 +12,21 @@ components:
   custom-mcp-server:
     enabled: true
 
-# Llama 3.2-3B Model Configuration
-llama3-2-3b: {}
+# Model Selection - Default: Llama 3.2-3B
+# To use Llama 4 Scout, run:
+# helm install --set llama3-2-3b.enabled=false --set llama4-scout.enabled=true --set llama-stack.llamaStack.inferenceModel=llama4-scout --set llama-stack.llamaStack.vllmUrl="http://llama4-scout-predictor:8080/v1" llama-stack-react ./helm/llama-stack-react
 
-# Llama Stack Configuration
+# Llama 3.2-3B Model Configuration (enabled by default)
+llama3-2-3b:
+  enabled: true
+
+# Llama 4 Scout Model Configuration (disabled by default)
+llama4-scout:
+  enabled: false
+
+# Llama Stack Configuration (model endpoints configured dynamically based on modelSelection)
 llama-stack:
-  # Remove MCP server configurations and focus on tool definitions
+  # HR Tools configuration (always needed for ReACT agent)
   config:
     tools:
       - name: "hr_vacation_balance"
@@ -28,6 +35,11 @@ llama-stack:
       - name: "hr_vacation_request" 
         description: "Create a vacation request for an employee"
         endpoint: "http://hr-api:3000/api/vacations"
+  
+  # Model configuration (will be overridden by _model-config.yaml template)
+  llamaStack:
+    inferenceModel: "llama3-2-3b"  # Default, dynamically updated
+    vllmUrl: "http://llama3-2-3b-predictor:8080/v1"  # Default, dynamically updated
 
 # ReACT Agent Configuration
 react-agent:

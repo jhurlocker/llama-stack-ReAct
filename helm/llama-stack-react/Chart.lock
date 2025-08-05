@@ -2,6 +2,9 @@ dependencies:
 - name: llama3-2-3b
   repository: file://../llama3.2-3b
   version: 1.0.0
+- name: llama4-scout
+  repository: file://../llama4-scout
+  version: 1.0.0
 - name: llama-stack
   repository: file://../llama-stack
   version: 1.0.0
@@ -14,5 +17,5 @@ dependencies:
 - name: custom-mcp-server
   repository: file://../custom-mcp-server
   version: 1.0.0
-digest: sha256:ce81d95deaca9d0e25e5bd4efa53db389860c698560f423fc8125e000090af2b
-generated: "2025-07-14T12:05:54.605448-04:00"
+digest: sha256:7e2ae973751179ab83d6144ae8c6ecce354cb920189012e886505779bc3cea00
+generated: "2025-08-05T17:09:09.274028+01:00"
