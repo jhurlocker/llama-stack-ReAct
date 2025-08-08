@@ -2,7 +2,7 @@
 
 Welcome to the Llama Stack with ReACT Agent Kickstart!
 
-Use this to quickly deploy Llama 3.2-3B on vLLM with Llama Stack and ReACT agents in your OpenShift AI environment.
+Use this to quickly deploy Llama 3.2-3B or Llama 4 Scout on vLLM with Llama Stack and ReACT agents in your OpenShift AI environment.
 
 To see how it's done, jump straight to [installation](#install).
 
@@ -14,6 +14,7 @@ To see how it's done, jump straight to [installation](#install).
 4. [Prerequisites](#prerequisites)
    - [Minimum hardware requirements](#minimum-hardware-requirements)
    - [Required software](#required-software)
+   - [MachineSet considerations](#machineset-considerations)
    - [Required permissions](#required-permissions)
 5. [Install](#install)
    - [Clone the repository](#clone-the-repository)
@@ -32,7 +33,7 @@ To see how it's done, jump straight to [installation](#install).
 ## Description
 
 This kickstart provides a complete setup for deploying:
-- Llama 3.2-3B model using vLLM on OpenShift AI
+- Llama 3.2-3B or Llama 4 Scout model using vLLM on OpenShift AI
 - Llama Stack for ReACT agent-based interactions
 - ReACT Agent implementation with reasoning and tool execution capabilities
 - Sample HR application providing RESTful services for HR data e.g. vacation booking
@@ -55,7 +56,7 @@ This kickstart provides a complete setup for deploying:
 
 ### Minimum hardware requirements
 
-- 1 GPU required (NVIDIA L40, A10, or similar)
+- 1 GPU required for Llama 3.2-3b (NVIDIA L40, A10, or similar), 4 GPUs required for Llama 4 Scount (NVIDIA L40S)
 - 8+ vCPUs
 - 24+ GiB RAM
 
@@ -66,6 +67,81 @@ This kickstart provides a complete setup for deploying:
 - OpenShift CLI (`oc`) - [Download here](https://docs.openshift.com/container-platform/latest/cli_reference/openshift_cli/getting-started-cli.html)
 - Helm CLI (`helm`) - [Download here](https://helm.sh/docs/intro/install/)
 
+### MachineSet considerations
+
+When deploying GPU-accelerated models, you'll need to ensure your OpenShift nodes have the appropriate GPU resources and taints/tolerations configured.
+
+#### GPU Node Taints
+
+Your GPU nodes should be tainted to ensure only GPU workloads are scheduled on them:
+
+**For NVIDIA A10G nodes (Llama 3.2-3B):**
+```yaml
+taints:
+- effect: NoSchedule
+  key: nvidia.com/gpu
+  value: NVIDIA-A10G-SHARED
+```
+
+**For NVIDIA L40S nodes (Llama 4 Scout):**
+```yaml
+taints:
+- effect: NoSchedule  
+  key: nvidia.com/gpu
+  value: NVIDIA-L40S-SHARED
+```
+
+#### Model Tolerations
+
+The Helm charts automatically configure the appropriate tolerations for each model:
+
+**Llama 3.2-3B tolerations** (requires 1 GPU):
+```yaml
+tolerations:
+- effect: NoSchedule
+  key: nvidia.com/gpu
+  value: NVIDIA-A10G-SHARED
+```
+
+**Llama 4 Scout tolerations** (requires 4 GPUs):
+```yaml
+tolerations:
+- effect: NoSchedule
+  key: nvidia.com/gpu
+  value: NVIDIA-L40S-SHARED
+```
+
+#### Example MachineSet Configuration
+
+Here's an example MachineSet configuration for GPU nodes:
+
+```yaml
+apiVersion: machine.openshift.io/v1beta1
+kind: MachineSet
+metadata:
+  name: gpu-machineset
+  namespace: openshift-machine-api
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      machine.openshift.io/cluster-api-machineset: gpu-machineset
+  template:
+    metadata:
+      labels:
+        machine.openshift.io/cluster-api-machineset: gpu-machineset
+    spec:
+      taints:
+      - effect: NoSchedule
+        key: nvidia.com/gpu
+        value: NVIDIA-L40S-SHARED  # or NVIDIA-A10G-SHARED for A10G nodes
+      providerSpec:
+        value:
+          # Your cloud provider specific configuration
+          # Include GPU instance types (e.g., g5.xlarge, p4d.24xlarge)
+```
+
+**Note:** Adjust the `value` field in the taint to match your specific GPU type. The models will only schedule on nodes with matching taints.
 
 ### Required permissions
 
@@ -79,9 +155,11 @@ This example was tested on Red Hat OpenShift 4.17.30 & Red Hat OpenShift AI v2.1
 
 All components are deployed using Helm charts located in the `helm/` directory:
 - `helm/llama3.2-3b/` - Llama 3.2-3B model on vLLM
+- `helm/llama4-scout/` - Llama 4 Scout model on vLLM
 - `helm/llama-stack/` - Llama Stack server
 - `helm/react-agent/` - ReACT Agent implementation
 - `helm/hr-api/` - HR Enterprise API
+- `helm/custom-mcp-server` - An MCP Server to connect to the HR API
 - `helm/llama-stack-react/` - Umbrella chart for single-command deployment
 
 ### Clone the repository
@@ -99,7 +177,9 @@ oc new-project llama-stack-react-demo
 
 ### Build and deploy the helm chart
 
-Deploy the complete Llama Stack with ReACT agent using the umbrella chart:
+Deploy the complete Llama Stack with ReACT agent using the umbrella chart
+
+To deploy with the default model Llama 3.2-3b:
 
 ```bash
 
@@ -111,7 +191,7 @@ helm install llama-stack-react ./helm/llama-stack-react
 
 ```
 
-or alternatively, to deploy the llama4 scout model run:
+or alternatively, to deploy the Llama4 scout model run:
 
 ```bash
   helm install llama-stack-react ./helm/llama-stack-react \
@@ -124,7 +204,7 @@ or alternatively, to deploy the llama4 scout model run:
 **Note:** The `llama-stack` pod will be in `CrashLoopBackOff` status until the Llama model is fully loaded and being served. This is normal behavior as the Llama Stack server requires the model endpoint to be available before it can start successfully.
 
 This will deploy all components including:
-- Llama 3.2-3B model on vLLM
+- Llama 3.2-3B or Llama 4 Scout model on vLLM
 - Llama Stack server with ReACT agent support
 - ReACT Agent implementation
 - HR Enterprise API  

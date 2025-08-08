@@ -84,7 +84,7 @@ ax.text(7, 9.5, 'Llama Stack with ReACT Agent Architecture',
 create_ellipse(ax, 0.5, 7.5, 2, 1, 'User\nRequest', fontsize=10)
 
 # UI Layer
-create_rect(ax, 3.5, 7.5, 2.5, 1, 'ReACT Agent\nWeb Interface\n(FastAPI)', fontsize=9)
+create_rect(ax, 3.5, 7.5, 2.5, 1, 'Streamlit\nApplication', fontsize=9)
 
 # Core Orchestration Layer
 create_rect(ax, 7, 7, 2.5, 1.5, 'Llama Stack\nServer + ReACT\n(port 11011)', fontsize=10)
@@ -93,8 +93,7 @@ create_rect(ax, 7, 7, 2.5, 1.5, 'Llama Stack\nServer + ReACT\n(port 11011)', fon
 create_rect(ax, 11, 7.5, 2.5, 1, 'Llama 3.2-3B\nvLLM/KServe', fontsize=9)
 
 # ReACT Agent Components (positioned below Llama Stack for vertical alignment)
-create_rect(ax, 6, 5, 2.2, 1, 'ReACT Agent\nReasoning Engine', fontsize=9)
-create_rect(ax, 8.5, 5, 2.2, 1, 'HR Tool\nExecutor', fontsize=9)
+create_rect(ax, 8.5, 5, 2.2, 1, 'Custom MCP\nServer', fontsize=9)
 
 # External APIs/Services (positioned at same level as agent components)
 create_cylinder(ax, 12.5, 5, 1.5, 1, 'HR Enterprise\nAPI\n(Node.js)', fontsize=7)
@@ -113,7 +112,6 @@ create_arrow(ax, (6, 8), (7, 8))
 create_arrow(ax, (9.5, 8), (11, 8))
 
 # Llama Stack to ReACT Components (vertical connections)
-create_arrow(ax, (7.8, 7), (7.1, 6))
 create_arrow(ax, (8.5, 7), (9.6, 6))
 
 # Tool Executor to HR API (horizontal connection)
@@ -123,7 +121,6 @@ create_arrow(ax, (10.7, 5.5), (12.5, 5.5))
 ax.text(3, 8.3, 'HTTP', ha='center', fontsize=8, color=PRIMARY_RED, style='italic')
 ax.text(6.5, 8.3, 'ReACT API', ha='center', fontsize=8, color=PRIMARY_RED, style='italic')
 ax.text(10.2, 8.3, 'OpenAI API', ha='center', fontsize=8, color=PRIMARY_RED, style='italic')
-ax.text(7.5, 6.5, 'Reasoning', ha='center', fontsize=8, color=PRIMARY_RED, style='italic')
 ax.text(11.6, 5.8, 'Tool Calls', ha='center', fontsize=8, color=PRIMARY_RED, style='italic')
 
 # Add component descriptions (bottom section)

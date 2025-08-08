@@ -3,7 +3,7 @@ replicaCount: 1
 
 image:
   repository: llamastack/distribution-remote-vllm
-  tag: "latest"
+  tag: "0.2.12"
   pullPolicy: IfNotPresent
 
 imagePullSecrets: []

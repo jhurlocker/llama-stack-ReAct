@@ -120,3 +120,7 @@ When you run the example, you'll see:
 - 📊 **Final responses** with complete reasoning chains
 
 This demonstrates how ReACT agents can provide intelligent, step-by-step reasoning for enterprise HR operations!
+
+# Building
+
+ podman build -t quay.io/hayesphilip/llama-stack-react:latest --platform=linux/amd64  -f Containerfile.streamlit .
