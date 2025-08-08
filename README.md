@@ -241,10 +241,10 @@ When the deployment is complete, you should see all pods running in your OpenShi
 
 1. Get the ReACT Agent Streamlit interface route:
 ```bash
-oc get route react-agent -n llama-stack-react-demo
+oc get route llama-stack-react-react-agent
 ```
 
-2. Open the Streamlit interface URL in your browser (it will look something like `https://react-agent-llama-stack-react-demo.apps.openshift-cluster.company.com`)
+2. Open the Streamlit interface URL in your browser (it will look something like `https://llama-stack-react-react-agent-react-demo.apps.openshift-cluster.company.com`)
 
 3. **Configure the Streamlit Interface**:
    - In the sidebar, set Host: `llama-stack` and Port: `80`
@@ -260,28 +260,11 @@ In the Streamlit interface, try these complex queries to test the ReACT reasonin
 If user EMP001 has enough remaining vacation days, book two days off for 2nd and 3rd of July 2025
 ```
 
-**Expected ReACT Response:**
-```
-🤔 Reasoning: I need to check EMP001's vacation balance first to determine if they have enough days available for booking.
-
-🛠 Using "hr_vacation_balance" tool for EMP001...
-
-🤔 Reasoning: The employee has 15 vacation days remaining, which is more than enough for the 2 days requested. I can proceed with the booking.
-
-🛠 Using "hr_vacation_request" tool to book July 2nd and 3rd, 2025...
-
-✅ Successfully booked 2 vacation days for EMP001 on July 2nd and 3rd, 2025. The employee now has 13 vacation days remaining.
-```
-
 **Test 2: Vacation balance inquiry**
 ```
 What is the vacation balance for employee EMP001?
 ```
 
-**Test 3: Complex multi-step reasoning**
-```
-Check if EMP001 has any vacation days left, and if so, suggest the best dates to book based on their remaining balance
-```
 
 The Streamlit interface will show:
 - 🤔 **Reasoning steps** in yellow boxes as the agent thinks through problems
