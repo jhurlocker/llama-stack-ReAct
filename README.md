@@ -1,8 +1,9 @@
 # Llama Stack with ReACT Agent
 
-Welcome to the Llama Stack with ReACT Agent Kickstart for OpenShift AI Developer Sandbox (https://developers.redhat.com/products/red-hat-openshift-ai)!
+Welcome to the Llama Stack with ReACT Agent Kickstart for OpenShift AI Developer Sandbox!
+https://developers.redhat.com/products/red-hat-openshift-ai
 
-Use this to quickly deploy Llama Stack and ReACT agents in your OpenShift AI environment.
+Use this to quickly deploy Llama Stack and ReACT agents in the OpenShift AI developer sandbox or your OpenShift AI environment.
 
 To see how it's done, jump straight to [installation](#install).
 
@@ -68,7 +69,7 @@ This kickstart provides a complete setup for deploying:
 - Helm CLI (`helm`) - [Download here](https://helm.sh/docs/intro/install/)
 
 ### MachineSet considerations
-NOTE: You won't be able to update the MachineSet configurations on OpenShift AI developer sandbox. This should be configured for you already.
+**NOTE:** You won't be able to update the MachineSet configurations on OpenShift AI developer sandbox. This should be configured for you already.
 
 When deploying GPU-accelerated models, you'll need to ensure your OpenShift nodes have the appropriate GPU resources and taints/tolerations configured.
 
@@ -113,7 +114,7 @@ tolerations:
 ```
 
 #### Example MachineSet Configuration
-NOTE: You won't be able to update the MachineSet configurations on OpenShift AI developer sandbox.
+**NOTE:** You won't be able to update the MachineSet configurations on OpenShift AI developer sandbox.
 
 Here's an example MachineSet configuration for GPU nodes:
 
