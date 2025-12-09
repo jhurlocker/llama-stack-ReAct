@@ -1,8 +1,8 @@
 # Llama Stack with ReACT Agent
 
-Welcome to the Llama Stack with ReACT Agent Kickstart!
+Welcome to the Llama Stack with ReACT Agent Kickstart for OpenShift AI Developer Sandbox (https://developers.redhat.com/products/red-hat-openshift-ai)!
 
-Use this to quickly deploy Llama 3.2-3B or Llama 4 Scout on vLLM with Llama Stack and ReACT agents in your OpenShift AI environment.
+Use this to quickly deploy Llama Stack and ReACT agents in your OpenShift AI environment.
 
 To see how it's done, jump straight to [installation](#install).
 
@@ -68,6 +68,7 @@ This kickstart provides a complete setup for deploying:
 - Helm CLI (`helm`) - [Download here](https://helm.sh/docs/intro/install/)
 
 ### MachineSet considerations
+NOTE: You won't be able to update the MachineSet configurations on OpenShift AI developer sandbox. This should be configured for you already.
 
 When deploying GPU-accelerated models, you'll need to ensure your OpenShift nodes have the appropriate GPU resources and taints/tolerations configured.
 
@@ -112,6 +113,7 @@ tolerations:
 ```
 
 #### Example MachineSet Configuration
+NOTE: You won't be able to update the MachineSet configurations on OpenShift AI developer sandbox.
 
 Here's an example MachineSet configuration for GPU nodes:
 
@@ -170,6 +172,7 @@ git clone https://github.com/rh-ai-kickstart/llama-stack-react-agent.git && \
 ```
 
 ### Create the project
+NOTE: Make sure you're logged into the OpenShift AI developer sandbox or your cluster.
 
 ```bash
 oc new-project llama-stack-react-demo
@@ -177,34 +180,30 @@ oc new-project llama-stack-react-demo
 
 ### Build and deploy the helm chart
 
-Deploy the complete Llama Stack with ReACT agent using the umbrella chart
-
-To deploy with the default model Llama 3.2-3b:
-
-```bash
-
-# Build dependencies (downloads and packages all required charts)
+Build the dependencies
+```
 helm dependency build ./helm/llama-stack-react
-
-# Deploy everything with a single command
-helm install llama-stack-react ./helm/llama-stack-react 
-
 ```
 
-or alternatively, to deploy the Llama4 scout model run:
+Deploy the complete Llama Stack with ReACT agent using the umbrella chart
+
+* Make sure you have a model deployed in the _llama-stack-react-demo_ project.
+
+* Replace _llama-stack.llamaStack.inferenceModel_ with the model deployment name in OpenShift AI.
+
+* Replace the _llama-stack.llamaStack.vllmUrl_ with the model internal endpoint.
 
 ```bash
   helm install llama-stack-react ./helm/llama-stack-react \
     --set llama3-2-3b.enabled=false \
-    --set llama4-scout.enabled=true \
-    --set llama-stack.llamaStack.inferenceModel=llama4-scout \
-    --set llama-stack.llamaStack.vllmUrl="http://llama4-scout-predictor:8080/v1"
+    --set llama4-scout.enabled=false \
+    --set llama-stack.llamaStack.inferenceModel=granite-2b \
+    --set llama-stack.llamaStack.vllmUrl="http://granite-2b-predictor.llama-stack-react-demo.svc.cluster.local:8080/v1"
 ```
 
-**Note:** The `llama-stack` pod will be in `CrashLoopBackOff` status until the Llama model is fully loaded and being served. This is normal behavior as the Llama Stack server requires the model endpoint to be available before it can start successfully.
+**Note:** The `llama-stack` pod will be in `CrashLoopBackOff` status if your model isn't fully loaded and being served. This is normal behavior as the Llama Stack server requires the model endpoint to be available before it can start successfully.
 
 This will deploy all components including:
-- Llama 3.2-3B or Llama 4 Scout model on vLLM
 - Llama Stack server with ReACT agent support
 - ReACT Agent implementation
 - HR Enterprise API  
@@ -228,7 +227,7 @@ For troubleshooting:
 ```bash
   oc get pods
   oc logs -l app.kubernetes.io/name=llama-stack
-  oc logs -l app.kubernetes.io/name=llama3-2-3b
+  oc logs -l app.kubernetes.io/name=granite-2b
   oc logs -l app.kubernetes.io/name=react-agent
   oc logs -l app.kubernetes.io/name=hr-enterprise-api
 ```
